@@ -1,12 +1,53 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import { Image, StyleSheet, Platform, ScrollView, StatusBar } from 'react-native';
 
-const picture = () => {
+import { HelloWave } from '@/components/HelloWave';
+import ParallaxScrollView from '@/components/ParallaxScrollView';
+import { ThemedText } from '@/components/ThemedText';
+import { ThemedView } from '@/components/ThemedView';
+
+export default function HomeScreen() {
+  const today = new Date().toLocaleDateString();
+  const tasks = ['Complete report', 'Make bed', 'Water plants']
   return (
-    <View>
-      <Text>picture</Text>
-    </View>
-  )
+    <ScrollView style={styles.scrollView}>
+      <ThemedView style={[styles.titleContainer, styles.centering]}>
+        <ThemedText style={styles.textStyle} type="title">Create Your Picture Perfect Day</ThemedText>
+      </ThemedView>
+      <ThemedView style={[styles.titleContainer, styles.centering]}>
+        <ThemedText type="subtitle">{today}</ThemedText>
+      </ThemedView>
+      <ThemedView style={styles.titleContainer}>
+        <ThemedText type="subtitle">Task List</ThemedText>
+      </ThemedView>
+      <ThemedView style={styles.taskContainer}>
+        {tasks.map((task, index) => (
+          <ThemedText key={index} type="defaultSemiBold">
+            {index + 1}. {task}
+          </ThemedText>
+        ))}      
+        </ThemedView>
+    </ScrollView>
+  );
 }
 
-export default picture
+const styles = StyleSheet.create({
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    padding: 12
+  },
+  taskContainer:{
+    gap: 8,
+    padding: 12
+  },
+  centering: {
+    justifyContent: 'center',
+  },
+  textStyle: {
+    fontSize: 25
+  },
+  scrollView: {
+    paddingTop: StatusBar.currentHeight,
+  }
+});
