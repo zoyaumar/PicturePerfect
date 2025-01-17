@@ -4,10 +4,10 @@ import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { TaskListScreen } from '@/components/TaskList';
 
 export default function HomeScreen() {
   const today = new Date().toLocaleDateString();
-  const tasks = ['Complete report', 'Make bed', 'Water plants']
   return (
     <ScrollView style={styles.scrollView}>
       <ThemedView style={[styles.titleContainer, styles.centering]}>
@@ -16,16 +16,7 @@ export default function HomeScreen() {
       <ThemedView style={[styles.titleContainer, styles.centering]}>
         <ThemedText type="subtitle">{today}</ThemedText>
       </ThemedView>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="subtitle">Task List</ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.taskContainer}>
-        {tasks.map((task, index) => (
-          <ThemedText key={index} type="defaultSemiBold">
-            {index + 1}. {task}
-          </ThemedText>
-        ))}      
-        </ThemedView>
+        <TaskListScreen></TaskListScreen>
     </ScrollView>
   );
 }
