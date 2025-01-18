@@ -8,12 +8,7 @@ import { TaskItem } from "./TaskItem";
 import { generateUUID } from "@/assets/tasks/uuid";
 import { mockTasks } from "@/assets/tasks/mockData";
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList, "TaskListScreen">;
-type TaskListRouteProp = RouteProp<RootStackParamList, "TaskListScreen">;
-
 export const TaskListScreen: React.FC = () => {
-  const navigation = useNavigation<NavigationProp>();
-  const route = useRoute<TaskListRouteProp>();
   const [taskList, setTaskList] = useState<Task[]>(mockTasks);
   const [taskInput, setTaskInput] = useState<string>("");
   const [error, showError] = useState<boolean>(false);

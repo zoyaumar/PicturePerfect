@@ -7,9 +7,21 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/providers/AuthProvider';
 import { Redirect } from 'expo-router';
 import Profile from '@/components/Profile';
+import getUserEmail from '@/hooks/useUserData';
+import { useEffect, useState } from 'react';
 
 export default function TabTwoScreen() {
   const { session } = useAuth();
+  const [email, setEmail] = useState<string | null>(null)
+
+  useEffect(()=> {
+    const fetchEmail = async () => {
+      const fetchedEmail = await getUserEmail();
+      setEmail(fetchedEmail || null)
+    }
+    fetchEmail()
+  }, [])
+
 
   if (!session) {
     return <Redirect href={'/sign-in'} />;
@@ -22,7 +34,7 @@ export default function TabTwoScreen() {
       </ThemedView>
       <Profile
         name="Bob"
-        email="bob@gmail.com"
+        email= {email}
         avatarUrl='https://www.pngplay.com/wp-content/uploads/12/User-Avatar-Profile-Transparent-Clip-Art-PNG.png' 
         following= {0}
         followers={0} >

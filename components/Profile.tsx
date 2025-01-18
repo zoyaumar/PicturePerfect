@@ -1,11 +1,12 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, Button } from 'react-native';
 import { ThemedText } from './ThemedText';
 import { ThemedView } from './ThemedView';
+import { styles } from '@/assets/tasks/styles';
 
 interface UserProfileProps {
     name: string;
-    email: string;
+    email: string | null;
     avatarUrl: string;
     bio?: string;
     following: number;
@@ -14,21 +15,25 @@ interface UserProfileProps {
 
 const UserProfile: React.FC<UserProfileProps> = ({ name, email, avatarUrl, following, followers, bio }) => {
     return (
-        <View style={styles.container}>
-            <Image source={{ uri: avatarUrl }} style={styles.avatar} />
-            <Text style={styles.name}>{name}</Text>
+        <View style={style.container}>
+            <Image source={{ uri: avatarUrl }} style={style.avatar} />
+            <Text style={style.name}>{name}</Text>
             <Text >{email}</Text>
-            <ThemedView style={styles.titleContainer}>
+            <ThemedView style={style.titleContainer}>
                 <ThemedText type='defaultSemiBold'>Following: {following}</ThemedText>
                 <ThemedText type='defaultSemiBold'>Followers: {followers}</ThemedText>
             </ThemedView>
-            
-            {bio && <Text style={styles.bio}>{bio}</Text>}
+            {bio && <Text style={style.bio}>{bio}</Text>}
+            <ThemedView style={style.titleContainer}>
+                <Button title={'Add Friends'}></Button>
+                <Button title={'Edit Profile'}></Button>
+            </ThemedView>
+
         </View>
     );
 };
 
-const styles = StyleSheet.create({
+const style = StyleSheet.create({
     titleContainer: {
         flexDirection: 'row',
         gap: 8,
