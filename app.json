@@ -34,7 +34,14 @@
           "backgroundColor": "#ffffff"
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos.",
+          "cameraPermission": "The app accesses your camera."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

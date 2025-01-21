@@ -18,6 +18,7 @@ export default function HomeScreen() {
       <FlatList 
         data={posts}
         renderItem={({item}) => <PostList post={item} />}
+        showsVerticalScrollIndicator={false}
       />
 
     </ScrollView>

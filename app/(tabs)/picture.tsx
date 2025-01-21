@@ -5,8 +5,9 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { TaskListScreen } from '@/components/TaskList';
+import Grid from '@/components/Grid';
 
-export default function HomeScreen() {
+export default function Picture() {
   const today = new Date().toLocaleDateString();
   return (
     <ScrollView style={styles.scrollView}>
@@ -16,7 +17,8 @@ export default function HomeScreen() {
       <ThemedView style={[styles.titleContainer, styles.centering]}>
         <ThemedText type="subtitle">{today}</ThemedText>
       </ThemedView>
-        <TaskListScreen></TaskListScreen>
+      <Grid />
+      <TaskListScreen></TaskListScreen>
     </ScrollView>
   );
 }
@@ -28,7 +30,7 @@ const styles = StyleSheet.create({
     gap: 8,
     padding: 12
   },
-  taskContainer:{
+  taskContainer: {
     gap: 8,
     padding: 12
   },
