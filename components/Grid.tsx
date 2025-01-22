@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Image, TouchableOpacity, StyleSheet, Alert, Dimensions } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 
 const Grid = ({ rows = 3, cols = 3 }) => {
@@ -9,7 +9,6 @@ const Grid = ({ rows = 3, cols = 3 }) => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [1, 1],
       quality: 1,
     });
 
@@ -20,12 +19,15 @@ const Grid = ({ rows = 3, cols = 3 }) => {
     }
   };
 
+  const columnWidth = (Dimensions.get('window').width)/cols
+  const columnHeight = (Dimensions.get('window').width)/rows
+
   return (
     <View style={styles.grid}>
       {images.map((image, index) => (
         <TouchableOpacity
           key={index}
-          style={styles.gridItem}
+          style={[styles.gridItem, {width:columnWidth}, {height:columnHeight}]}
           onPress={() => pickImage(index)}
         >
           {image ? (
@@ -44,13 +46,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     width: '100%',
+    aspectRatio:1,
     justifyContent:'center'
   },
   gridItem: {
     borderWidth: 1,
-    width:"30%",
     borderColor: '#ccc',
-    height: 100,
+    justifyContent:'center',
+    alignItems:'center',
   },
   image: {
     width: '100%',
