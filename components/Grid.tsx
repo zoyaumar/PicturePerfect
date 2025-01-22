@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Image, TouchableOpacity, StyleSheet, Alert, Dimensions } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 
-const Grid = ({ rows = 3, cols = 3 }) => {
+const Grid = ({ rows, cols }:{rows:number, cols:number}) => {
   const [images, setImages] = useState(Array(rows * cols).fill(null));
 
   const pickImage = async (index: number) => {

@@ -17,7 +17,7 @@ export default function Picture() {
       <ThemedView style={[styles.titleContainer, styles.centering]}>
         <ThemedText type="subtitle">{today}</ThemedText>
       </ThemedView>
-      <Grid />
+      
       <TaskListScreen></TaskListScreen>
     </ScrollView>
   );
@@ -41,6 +41,6 @@ const styles = StyleSheet.create({
     fontSize: 25
   },
   scrollView: {
-    paddingTop: StatusBar.currentHeight,
+    paddingTop: StatusBar.currentHeight
   }
 });

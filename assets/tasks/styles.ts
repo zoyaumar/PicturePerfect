@@ -9,8 +9,13 @@ export const styles = StyleSheet.create({
     title: {
         fontSize: 32,
         fontWeight: "bold",
-        marginBottom: 20,
+        marginBottom: 5,
         color: "#4b0082",
+    },
+    underText: {
+        fontSize: 15,
+        fontWeight: "bold",
+        marginBottom: 10,
     },
     titleInput: {
         fontSize: 24,

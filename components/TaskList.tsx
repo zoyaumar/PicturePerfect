@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, createContext } from "react";
 import { View, Text, TextInput, FlatList, TouchableOpacity } from "react-native";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -7,6 +7,14 @@ import { styles } from "@/assets/tasks/styles";
 import { TaskItem } from "./TaskItem";
 import { generateUUID } from "@/assets/tasks/uuid";
 import { mockTasks } from "@/assets/tasks/mockData";
+import Grid from "./Grid";
+
+// const TasksContext = createContext();
+
+// const TasksProvider = ({children} => {
+//   const [taskList, setTaskList] = useState<Task[]>(mockTasks);
+
+// })
 
 export const TaskListScreen: React.FC = () => {
   const [taskList, setTaskList] = useState<Task[]>(mockTasks);
@@ -35,15 +43,19 @@ export const TaskListScreen: React.FC = () => {
     setTaskList((prevTasks) => prevTasks.filter((_, i) => i !== index));
   };
 
-  const updateTask = (updatedTask: Task): void => {
-    setTaskList((prevTasks) =>
-      prevTasks.map((task) => (task.id === updatedTask.id ? updatedTask : task))
-    );
-  };
-
   return (
+    <View>
+      {taskList.length == 9 && <Grid rows={3} cols={3} />}
+      {taskList.length == 6 && <Grid rows={3} cols={2} />}
+      {taskList.length == 5 && <Grid rows={5} cols={1} />}
+      {taskList.length == 4 && <Grid rows={2} cols={2} />}
+      {taskList.length == 3 && <Grid rows={1} cols={3} />}
+      {taskList.length == 2 && <Grid rows={1} cols={2} />}
+      {taskList.length == 1 && <Grid rows={1} cols={1} />}
+
       <View style={styles.container}>
-        <Text style={styles.title}>Task List</Text>
+        <Text style={styles.title}>Edit Task List</Text>
+        <Text style={styles.underText}>Recommended Amount: 4 or 9 tasks</Text>
         <View style={styles.inputWrapper}>
           <TextInput
             placeholder="Add a new task..."
@@ -70,8 +82,18 @@ export const TaskListScreen: React.FC = () => {
               />
             </TouchableOpacity>
           )}
+          nestedScrollEnabled={true}
           keyExtractor={(item) => item.id}
         />
+        <Text>Limit is 9</Text>
       </View>
+    </View>
+    
   );
 };
+
+// export function getListLength(){
+//   return(
+    
+//   )
+// }
