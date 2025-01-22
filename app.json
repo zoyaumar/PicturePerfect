@@ -38,8 +38,7 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "The app accesses your photos.",
-          "cameraPermission": "The app accesses your camera."
+          "photosPermission": "The app accesses your photos."
         }
       ]
     ],

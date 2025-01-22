@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 
-const Grid = ({ rows = 2, cols = 3 }) => {
+const Grid = ({ rows = 3, cols = 3 }) => {
   const [images, setImages] = useState(Array(rows * cols).fill(null));
 
   const pickImage = async (index: number) => {
@@ -25,7 +25,7 @@ const Grid = ({ rows = 2, cols = 3 }) => {
       {images.map((image, index) => (
         <TouchableOpacity
           key={index}
-          style={[styles.gridItem, { flex: 1 / cols }]}
+          style={styles.gridItem}
           onPress={() => pickImage(index)}
         >
           {image ? (
@@ -43,9 +43,12 @@ const styles = StyleSheet.create({
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    width: '100%',
+    justifyContent:'center'
   },
   gridItem: {
     borderWidth: 1,
+    width:"30%",
     borderColor: '#ccc',
     height: 100,
   },
