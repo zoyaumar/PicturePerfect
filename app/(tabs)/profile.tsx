@@ -1,8 +1,6 @@
 import { StyleSheet, Image, Platform, Button, ScrollView, StatusBar } from 'react-native';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { IconSymbol } from '@/components/ui/IconSymbol';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/providers/AuthProvider';
 import { Redirect } from 'expo-router';

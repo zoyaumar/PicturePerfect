@@ -40,7 +40,8 @@
         {
           "photosPermission": "The app accesses your photos."
         }
-      ]
+      ],
+      "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true

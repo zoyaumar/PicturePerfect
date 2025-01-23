@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { View, Image, TouchableOpacity, StyleSheet, Alert, Dimensions } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import { UploadClient, uploadFile } from '@uploadcare/upload-client';
 
-const Grid = ({ rows, cols }:{rows:number, cols:number}) => {
+const Grid = ({ rows, cols }: { rows: number, cols: number }) => {
   const [images, setImages] = useState(Array(rows * cols).fill(null));
+  const client = new UploadClient({ publicKey: 'ad7300aff23461f09657' });
+
 
   const pickImage = async (index: number) => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -11,23 +14,33 @@ const Grid = ({ rows, cols }:{rows:number, cols:number}) => {
       allowsEditing: true,
       quality: 1,
     });
-
     if (!result.canceled) {
+      type ReactNativeAsset = {
+        uri: string;
+        type: string;
+        name?: string;
+    };
+    const assets: ReactNativeAsset = {
+      uri: result.assets[0].uri,
+      name: result.assets[0].fileName+'',
+      type: 'image/jpeg',
+  };
+  uploadFile(assets, { publicKey: 'ad7300aff23461f09657' })
       const newImages = [...images];
       newImages[index] = result.assets[0].uri;
       setImages(newImages);
     }
   };
 
-  const columnWidth = (Dimensions.get('window').width)/cols
-  const columnHeight = (Dimensions.get('window').width)/rows
+  const columnWidth = (Dimensions.get('window').width) / cols
+  const columnHeight = (Dimensions.get('window').width) / rows
 
   return (
     <View style={styles.grid}>
       {images.map((image, index) => (
         <TouchableOpacity
           key={index}
-          style={[styles.gridItem, {width:columnWidth}, {height:columnHeight}]}
+          style={[styles.gridItem, { width: columnWidth }, { height: columnHeight }]}
           onPress={() => pickImage(index)}
         >
           {image ? (
@@ -46,14 +59,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     width: '100%',
-    aspectRatio:1,
-    justifyContent:'center'
+    aspectRatio: 1,
+    justifyContent: 'center'
   },
   gridItem: {
     borderWidth: 1,
     borderColor: '#ccc',
-    justifyContent:'center',
-    alignItems:'center',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   image: {
     width: '100%',

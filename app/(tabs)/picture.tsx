@@ -1,11 +1,7 @@
-import { Image, StyleSheet, Platform, ScrollView, StatusBar } from 'react-native';
-
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
+import { Image, StyleSheet, Platform, ScrollView, StatusBar, Button } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { TaskListScreen } from '@/components/TaskList';
-import Grid from '@/components/Grid';
 
 export default function Picture() {
   const today = new Date().toLocaleDateString();
@@ -17,7 +13,6 @@ export default function Picture() {
       <ThemedView style={[styles.titleContainer, styles.centering]}>
         <ThemedText type="subtitle">{today}</ThemedText>
       </ThemedView>
-      
       <TaskListScreen></TaskListScreen>
     </ScrollView>
   );
