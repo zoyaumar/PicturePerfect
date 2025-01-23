@@ -1,11 +1,24 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Image, TouchableOpacity, StyleSheet, Alert, Dimensions } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { UploadClient, uploadFile } from '@uploadcare/upload-client';
+import { getUserId, getUserImages, updateImages } from '@/hooks/useUserData';
 
 const Grid = ({ rows, cols }: { rows: number, cols: number }) => {
+
+  const [id, setId] = useState('hello');
   const [images, setImages] = useState(Array(rows * cols).fill(null));
-  const client = new UploadClient({ publicKey: 'ad7300aff23461f09657' });
+
+  useEffect(() => {
+    const getid = async () => {
+      const userId = await getUserId();
+      console.log("got id ", userId)
+      setId(userId + '')
+      const fetchedImages = await getUserImages(userId + '');
+      setImages(fetchedImages || Array(rows * cols).fill(null))
+    };
+    getid()
+  }, [])
 
 
   const pickImage = async (index: number) => {
@@ -14,21 +27,27 @@ const Grid = ({ rows, cols }: { rows: number, cols: number }) => {
       allowsEditing: true,
       quality: 1,
     });
+
     if (!result.canceled) {
       type ReactNativeAsset = {
         uri: string;
         type: string;
         name?: string;
-    };
-    const assets: ReactNativeAsset = {
-      uri: result.assets[0].uri,
-      name: result.assets[0].fileName+'',
-      type: 'image/jpeg',
-  };
-  uploadFile(assets, { publicKey: 'ad7300aff23461f09657' })
+      };
+      const assets: ReactNativeAsset = {
+        uri: result.assets[0].uri,
+        name: result.assets[0].fileName + '',
+        type: 'image/jpeg',
+      };
+
       const newImages = [...images];
-      newImages[index] = result.assets[0].uri;
-      setImages(newImages);
+      uploadFile(assets, { publicKey: 'ad7300aff23461f09657' }).then((file) => {
+        newImages[index] = file.cdnUrl + file.name
+        console.log(newImages[index])
+        setImages(newImages);
+        updateImages(id, newImages)
+      })
+
     }
   };
 
