@@ -16,7 +16,7 @@ export const getUserId = async () => {
         console.error('Error fetching user:', error);
         return null;
     }
-    console.log("id ", data.user.id)
+    //console.log("id ", data.user.id)
     return data.user ? data.user.id : null; // Return user ID or null if not authenticated
 };
 
@@ -36,7 +36,7 @@ export const updateImages = async (userId: any, images: any) => {
     }
 }
 
-export const getUserImages = async (userId: string) => {
+export const getUserImages = async (userId: string):Promise<string[]> => {
     try {
         const { data, error } = await supabase
             .from('profiles')
@@ -52,6 +52,42 @@ export const getUserImages = async (userId: string) => {
     } catch (error) {
         console.error('Error fetching user images:', error);
         return [];
+    }
+}
+
+
+export const getUserTasks = async (userId: string):Promise<string[]> => {
+    try {
+        const { data, error } = await supabase
+            .from('profiles')
+            .select('tasks')
+            .eq('id', userId)
+            .single();
+
+        if (error) {
+            throw new Error(error.message);
+        }
+        return data ? data.tasks : null;
+
+    } catch (error) {
+        console.error('Error fetching user tasks:', error);
+        return [];
+    }
+}
+
+export const updateTasks = async (userId: any, tasks: any) => {
+    try {
+        const { data, error } = await supabase
+            .from('profiles')
+            .update({ tasks: tasks })
+            .eq('id', userId)
+            .select()
+
+        if (error) {
+            throw new Error(error.message);
+        }
+    } catch (error) {
+        console.error('Error updating user tasks:', error);
     }
 }
 

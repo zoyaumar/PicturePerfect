@@ -1,46 +1,60 @@
 import React, { useState, useEffect, createContext } from "react";
 import { View, Text, TextInput, FlatList, TouchableOpacity } from "react-native";
-import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList, Task } from "./Task";
 import { styles } from "@/assets/tasks/styles";
 import { TaskItem } from "./TaskItem";
-import { generateUUID } from "@/assets/tasks/uuid";
-import { mockTasks } from "@/assets/tasks/mockData";
 import Grid from "./Grid";
-
-// const TasksContext = createContext();
-
-// const TasksProvider = ({children} => {
-//   const [taskList, setTaskList] = useState<Task[]>(mockTasks);
-
-// })
+import { getUserId, getUserImages, getUserTasks, updateImages, updateTasks } from "@/hooks/useUserData";
 
 export const TaskListScreen: React.FC = () => {
-  const [taskList, setTaskList] = useState<Task[]>(mockTasks);
+  const [id, setId] = useState('');
+  const [taskList, setTaskList] = useState<string[]>(['']);
   const [taskInput, setTaskInput] = useState<string>("");
   const [error, showError] = useState<boolean>(false);
 
+
+
+
+  useEffect(() => {
+    const getid = async () => {
+      const userId = await getUserId();
+      console.log("got id ", userId)
+      setId(userId + '')
+
+      const fetchedTasks = await getUserTasks(userId + '');
+      setTaskList(fetchedTasks)
+    };
+    getid()
+  }, [])
+
+
   const addTask = (): void => {
     if (taskInput.trim()) {
-      setTaskList([...taskList, { id: generateUUID(), title: taskInput, description: "" }]);
+      updateTasks(id, [...taskList, taskInput])
+      setTaskList([...taskList, taskInput]);
+      
       setTaskInput("");
       showError(false);
     } else {
       showError(true);
     }
   };
-
-  const toggleComplete = (index: number): void => {
-    setTaskList((prevTasks) =>
-      prevTasks.map((task, i) =>
-        i === index ? { ...task} : task
-      )
-    );
-  };
-
+  // const toggleComplete = (index: number): void => {
+  //   setTaskList((prevTasks) =>
+  //     prevTasks.map((task, i) =>
+  //       i === index ? { ...task} : task
+  //     )
+  //   );
+  // };
+  const getArr = async () => {
+    const imgArr = await getUserImages(id);
+    updateImages(id, imgArr.slice(0, taskList.length))
+}
   const removeTask = (index: number): void => {
+    let arr = ((prevTasks: any[]) => prevTasks.filter((_, i) => i !== index))
+    updateTasks(id, arr)
     setTaskList((prevTasks) => prevTasks.filter((_, i) => i !== index));
+    
+    getArr()
   };
 
   return (
@@ -77,13 +91,12 @@ export const TaskListScreen: React.FC = () => {
             <TouchableOpacity >
               <TaskItem
                 task={item}
-                onToggle={() => toggleComplete(index)}
                 onDelete={() => removeTask(index)}
               />
             </TouchableOpacity>
           )}
           nestedScrollEnabled={true}
-          keyExtractor={(item) => item.id}
+          //keyExtractor={(item) => item.id}
         />
         <Text>Limit is 9</Text>
       </View>

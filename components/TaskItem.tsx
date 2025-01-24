@@ -5,15 +5,14 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import { Task } from "./Task";
 
 interface TaskItemProps {
-    task: Task;
-    onToggle: () => void;
+    task: string;
     onDelete: () => void;
 }
 
-export const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete }) => (
+export const TaskItem: React.FC<TaskItemProps> = ({ task, onDelete }) => (
     <View style={styles.listItem}>        
         <Text style={[styles.task]}>
-            {task.title}
+            {task}
         </Text>
         <TouchableOpacity style={styles.deleteButton} onPress={onDelete}>
             <Text style={[styles.buttonText, styles.deleteButtonText]}>×</Text>

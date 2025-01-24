@@ -2,22 +2,29 @@ import React, { useEffect, useState } from 'react';
 import { View, Image, TouchableOpacity, StyleSheet, Alert, Dimensions } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { UploadClient, uploadFile } from '@uploadcare/upload-client';
-import { getUserId, getUserImages, updateImages } from '@/hooks/useUserData';
+import { getUserId, getUserImages, getUserTasks, updateImages } from '@/hooks/useUserData';
+import { ThemedText } from './ThemedText';
 
 const Grid = ({ rows, cols }: { rows: number, cols: number }) => {
 
   const [id, setId] = useState('hello');
   const [images, setImages] = useState(Array(rows * cols).fill(null));
+  const [fetchedTasks, setTasks] = useState(['']);
 
   useEffect(() => {
     const getid = async () => {
       const userId = await getUserId();
-      console.log("got id ", userId)
       setId(userId + '')
       const fetchedImages = await getUserImages(userId + '');
-      setImages(fetchedImages || Array(rows * cols).fill(null))
+      const arr = Array(rows * cols).fill(null)
+      for (let i = 0; i < fetchedImages.length && i < arr.length; i++) {
+        arr[i] = fetchedImages[i]
+      }
+      setImages(arr)
+      setTasks(await getUserTasks(userId+''))
     };
     getid()
+    
   }, [])
 
 
@@ -40,11 +47,12 @@ const Grid = ({ rows, cols }: { rows: number, cols: number }) => {
         type: 'image/jpeg',
       };
 
-      const newImages = [...images];
+      let newImages = [...images];
       uploadFile(assets, { publicKey: 'ad7300aff23461f09657' }).then((file) => {
         newImages[index] = file.cdnUrl + file.name
-        console.log(newImages[index])
+        newImages = newImages.slice(0, rows * cols)
         setImages(newImages);
+        console.log(newImages)
         updateImages(id, newImages)
       })
 
@@ -65,7 +73,15 @@ const Grid = ({ rows, cols }: { rows: number, cols: number }) => {
           {image ? (
             <Image source={{ uri: image }} style={styles.image} />
           ) : (
-            <View style={styles.placeholder} />
+
+            <View style={styles.placeholder}>
+              {fetchedTasks[index] ? (
+                <ThemedText type='subtitle' style={styles.text}>{fetchedTasks[index]}</ThemedText>
+            ) : (
+                <ThemedText type='subtitle' >No task found at this index.</ThemedText>
+            )}
+            </View>
+
           )}
         </TouchableOpacity>
       ))}
@@ -95,7 +111,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#eee',
     width: '100%',
     height: '100%',
+    
   },
+  text:{
+    textAlign:'center',
+    textAlignVertical:'center',
+    flex: 1,
+    justifyContent:'center'
+  }
 });
 
 export default Grid;
