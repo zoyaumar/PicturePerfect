@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { View, Image, TouchableOpacity, StyleSheet, Alert, Dimensions } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { View, Image, TouchableOpacity, StyleSheet, Alert, Dimensions, Button } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { UploadClient, uploadFile } from '@uploadcare/upload-client';
-import { getUserId, getUserImages, getUserTasks, updateImages } from '@/hooks/useUserData';
+import { getUserId, getUserImages, getUserTasks, insertPost, updateImages } from '@/hooks/useUserData';
 import { ThemedText } from './ThemedText';
+import ViewShot, { captureRef } from 'react-native-view-shot';
+import RNFS from 'react-native-fs';
+
 
 const Grid = ({ rows, cols }: { rows: number, cols: number }) => {
 
@@ -21,10 +24,10 @@ const Grid = ({ rows, cols }: { rows: number, cols: number }) => {
         arr[i] = fetchedImages[i]
       }
       setImages(arr)
-      setTasks(await getUserTasks(userId+''))
+      setTasks(await getUserTasks(userId + ''))
     };
     getid()
-    
+
   }, [])
 
 
@@ -34,6 +37,7 @@ const Grid = ({ rows, cols }: { rows: number, cols: number }) => {
       allowsEditing: true,
       quality: 1,
     });
+
 
     if (!result.canceled) {
       type ReactNativeAsset = {
@@ -47,6 +51,7 @@ const Grid = ({ rows, cols }: { rows: number, cols: number }) => {
         type: 'image/jpeg',
       };
 
+
       let newImages = [...images];
       uploadFile(assets, { publicKey: 'ad7300aff23461f09657' }).then((file) => {
         newImages[index] = file.cdnUrl + file.name
@@ -59,32 +64,76 @@ const Grid = ({ rows, cols }: { rows: number, cols: number }) => {
     }
   };
 
+
   const columnWidth = (Dimensions.get('window').width) / cols
   const columnHeight = (Dimensions.get('window').width) / rows
+ 
+  const viewRef = useRef<ViewShot>(null);
+
+
+  const saveCollage = async () => {
+    if (viewRef.current) {
+      try {
+        const uri = await captureRef(viewRef.current, {
+          format: 'jpg',
+          quality: 0.8,
+        });
+
+        const path = `${RNFS.ExternalDirectoryPath}/collage.jpg`;
+        await RNFS.copyFile(uri, path);
+        console.log('Image saved to', path);
+
+        type ReactNativeAsset = {
+          uri: string;
+          type: string;
+          name?: string;
+        };
+        const assets: ReactNativeAsset = {
+          uri: uri,
+          type: 'image/jpeg',
+        };
+
+        uploadFile(assets, { publicKey: 'ad7300aff23461f09657' }).then((file) => {
+          const imgUrl = file.cdnUrl + file.name
+          insertPost(id, imgUrl)
+        })
+
+
+      } catch (error) {
+        console.error('Error capturing view:', error);
+      }
+    } else {
+      console.error('View reference is undefined');
+    }
+  };
+
 
   return (
-    <View style={styles.grid}>
-      {images.map((image, index) => (
-        <TouchableOpacity
-          key={index}
-          style={[styles.gridItem, { width: columnWidth }, { height: columnHeight }]}
-          onPress={() => pickImage(index)}
-        >
-          {image ? (
-            <Image source={{ uri: image }} style={styles.image} />
-          ) : (
-
-            <View style={styles.placeholder}>
-              {fetchedTasks[index] ? (
-                <ThemedText type='subtitle' style={styles.text}>{fetchedTasks[index]}</ThemedText>
+    <View>
+      <ViewShot ref={viewRef} style={styles.grid}>
+        {images.map((image, index) => (
+          <TouchableOpacity
+            key={index}
+            style={[styles.gridItem, { width: columnWidth }, { height: columnHeight }]}
+            onPress={() => pickImage(index)}
+          >
+            {image ? (
+              <Image source={{ uri: image }} style={styles.image} />
             ) : (
-                <ThemedText type='subtitle' >No task found at this index.</ThemedText>
-            )}
-            </View>
 
-          )}
-        </TouchableOpacity>
-      ))}
+              <View style={styles.placeholder}>
+                {fetchedTasks[index] ? (
+                  <ThemedText type='subtitle' style={styles.text}>{fetchedTasks[index]}</ThemedText>
+                ) : (
+                  <ThemedText type='subtitle' >No task found at this index.</ThemedText>
+                )}
+              </View>
+
+            )}
+          </TouchableOpacity>
+        ))}
+      </ViewShot>
+      <Button title="Save Grid as Image" onPress={saveCollage} />
     </View>
   );
 };
@@ -111,14 +160,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#eee',
     width: '100%',
     height: '100%',
-    
+
+
   },
-  text:{
-    textAlign:'center',
-    textAlignVertical:'center',
+  text: {
+    textAlign: 'center',
+    textAlignVertical: 'center',
     flex: 1,
-    justifyContent:'center'
+    justifyContent: 'center'
   }
 });
 
+
 export default Grid;
+
+
+
+
+

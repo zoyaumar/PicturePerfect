@@ -55,6 +55,13 @@ export const getUserImages = async (userId: string):Promise<string[]> => {
     }
 }
 
+export const insertPost = async (userId: string, image: string) => {
+    const {data, error} = await supabase
+        .from('posts')
+        .insert([{ image: image, user_id: userId}])
+        .select()
+}
+
 
 export const getUserTasks = async (userId: string):Promise<string[]> => {
     try {
