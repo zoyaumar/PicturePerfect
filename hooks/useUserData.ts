@@ -62,6 +62,15 @@ export const insertPost = async (userId: string, image: string) => {
         .select()
 }
 
+export const getPosts = async () => {
+    const {data, error} = await supabase
+        .from('posts')
+        .select('*, user:profiles(*)')
+        .order('created_at', {ascending: false})
+        //.eq('id')
+
+    return data
+}
 
 export const getUserTasks = async (userId: string):Promise<string[]> => {
     try {

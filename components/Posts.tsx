@@ -1,22 +1,37 @@
 import { Image, StyleSheet, Platform, View, StatusBar } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import posts from '../assets/posts.json'
 
 import { Ionicons, Feather, AntDesign } from '@expo/vector-icons'
 
-export default function PostList({post}:{post:any}) {
-    console.log(post)
+export default function PostList({ post }: { post: any }) {
+    const [username, setUser] = useState('user');
+
+    useEffect(() => {
+        const getData = async () => {
+            let username = await post.user.username
+            setUser(username)
+        }
+        getData()
+    }, [])
+
     return (
         <ThemedView lightColor='white' style={styles.gap}>
             <View style={styles.username}>
-                <Image source={{ uri: post.user.image_url }} style={styles.avatar} />
-                <ThemedText type='defaultSemiBold'> {post.user.username} </ThemedText>
+                <Image source={{ uri: 'https://www.pngplay.com/wp-content/uploads/12/User-Avatar-Profile-Transparent-Clip-Art-PNG.png' }} style={styles.avatar} />
+                {username ? (
+                    <ThemedText type='defaultSemiBold'> {username} </ThemedText>
+                ) : (
+                    <ThemedText type='defaultSemiBold'> user </ThemedText>
+                )}
             </View>
+
             <ThemedView style={styles.imageContainer}>
-                <Image source={{ uri: post.image_url }} style={styles.img} />
+                <Image source={{ uri: post.image }} style={styles.img} />
             </ThemedView>
+
             <View style={styles.icons}>
                 <AntDesign
                     name={'hearto'}
@@ -57,8 +72,8 @@ const styles = StyleSheet.create({
         padding: 5,
         marginLeft: 7
     },
-    gap:{
-        marginBottom:5,
-        marginTop:10
+    gap: {
+        marginBottom: 5,
+        marginTop: 10
     }
 });

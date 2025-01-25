@@ -14,6 +14,9 @@ const Grid = ({ rows, cols }: { rows: number, cols: number }) => {
   const [images, setImages] = useState(Array(rows * cols).fill(null));
   const [fetchedTasks, setTasks] = useState(['']);
 
+  //  const { user } = useAuth();
+  //  user.id
+
   useEffect(() => {
     const getid = async () => {
       const userId = await getUserId();
