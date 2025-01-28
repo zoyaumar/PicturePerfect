@@ -8,11 +8,15 @@ import { Ionicons, Feather, AntDesign } from '@expo/vector-icons'
 
 export default function PostList({ post }: { post: any }) {
     const [username, setUser] = useState('user');
+    const [avatar, setAvatar] = useState('https://ucarecdn.com/372dbec8-6008-4d2c-917a-b6c0da1b346b/-/scale_crop/300x300/');
 
     useEffect(() => {
         const getData = async () => {
             let username = await post.user.username
             setUser(username)
+            let avatar = await post.user.avatar_url
+            console.log(avatar)
+            setAvatar(avatar)
         }
         getData()
     }, [])
@@ -20,7 +24,7 @@ export default function PostList({ post }: { post: any }) {
     return (
         <ThemedView lightColor='white' style={styles.gap}>
             <View style={styles.username}>
-                <Image source={{ uri: 'https://www.pngplay.com/wp-content/uploads/12/User-Avatar-Profile-Transparent-Clip-Art-PNG.png' }} style={styles.avatar} />
+                <Image source={{ uri: avatar }} style={styles.avatar} />
                 {username ? (
                     <ThemedText type='defaultSemiBold'> {username} </ThemedText>
                 ) : (

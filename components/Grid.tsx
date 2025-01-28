@@ -6,11 +6,12 @@ import { getUserId, getUserImages, getUserTasks, insertPost, updateImages } from
 import { ThemedText } from './ThemedText';
 import ViewShot, { captureRef } from 'react-native-view-shot';
 import RNFS from 'react-native-fs';
+import { useAuth } from '@/providers/AuthProvider';
 
 
 const Grid = ({ rows, cols }: { rows: number, cols: number }) => {
 
-  const [id, setId] = useState('hello');
+  const { session } = useAuth();
   const [images, setImages] = useState(Array(rows * cols).fill(null));
   const [fetchedTasks, setTasks] = useState(['']);
 
@@ -18,18 +19,19 @@ const Grid = ({ rows, cols }: { rows: number, cols: number }) => {
   //  user.id
 
   useEffect(() => {
-    const getid = async () => {
-      const userId = await getUserId();
-      setId(userId + '')
-      const fetchedImages = await getUserImages(userId + '');
+    const getData = async () => {
+      const fetchedImages = await getUserImages(session?.user.id + '');
       const arr = Array(rows * cols).fill(null)
-      for (let i = 0; i < fetchedImages.length && i < arr.length; i++) {
-        arr[i] = fetchedImages[i]
+      if (fetchedImages) {
+        for (let i = 0; i < fetchedImages.length && i < arr.length; i++) {
+          arr[i] = fetchedImages[i]
+        }
       }
+
       setImages(arr)
-      setTasks(await getUserTasks(userId + ''))
+      setTasks(await getUserTasks(session?.user.id + ''))
     };
-    getid()
+    getData()
 
   }, [])
 
@@ -61,7 +63,7 @@ const Grid = ({ rows, cols }: { rows: number, cols: number }) => {
         newImages = newImages.slice(0, rows * cols)
         setImages(newImages);
         console.log(newImages)
-        updateImages(id, newImages)
+        updateImages(session?.user.id, newImages)
       })
 
     }
@@ -70,7 +72,7 @@ const Grid = ({ rows, cols }: { rows: number, cols: number }) => {
 
   const columnWidth = (Dimensions.get('window').width) / cols
   const columnHeight = (Dimensions.get('window').width) / rows
- 
+
   const viewRef = useRef<ViewShot>(null);
 
 
@@ -98,7 +100,7 @@ const Grid = ({ rows, cols }: { rows: number, cols: number }) => {
 
         uploadFile(assets, { publicKey: 'ad7300aff23461f09657' }).then((file) => {
           const imgUrl = file.cdnUrl + file.name
-          insertPost(id, imgUrl)
+          insertPost(session?.user.id + '', imgUrl)
         })
 
 

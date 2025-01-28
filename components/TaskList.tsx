@@ -47,6 +47,7 @@ export const TaskListScreen: React.FC = () => {
   // };
   const getArr = async () => {
     const imgArr = await getUserImages(id);
+    if(imgArr)
     updateImages(id, imgArr.slice(0, taskList.length))
 }
   const removeTask = (index: number): void => {

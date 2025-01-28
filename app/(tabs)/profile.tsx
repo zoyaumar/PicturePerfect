@@ -5,25 +5,33 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/providers/AuthProvider';
 import { Redirect } from 'expo-router';
 import Profile from '@/components/Profile';
-import getUserEmail from '@/hooks/useUserData';
+import getUserEmail, { getAvatar, getProfile } from '@/hooks/useUserData';
 import { useEffect, useState } from 'react';
 
 export default function TabTwoScreen() {
   const { session } = useAuth();
-  const [email, setEmail] = useState<string | null>(null)
+  const [email, setEmail] = useState('')
+  const [avatar, setAvatar] = useState('');
+  const [username, setUsername] = useState('user');
+  const [name, setName] = useState('user');
 
-  useEffect(()=> {
-    const fetchEmail = async () => {
-      const fetchedEmail = await getUserEmail();
-      setEmail(fetchedEmail || null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const fetchedData = await getProfile(session?.user.id);
+      setEmail(session?.user.email+'')
+      setAvatar(fetchedData.avatar_url)
+      setUsername(fetchedData.username)
+      setName(fetchedData.full_name)
     }
-    fetchEmail()
+    fetchData()
   }, [])
 
 
   if (!session) {
     return <Redirect href={'/sign-in'} />;
   }
+
   return (
 
     <ScrollView style={styles.scrollView}>
@@ -31,10 +39,10 @@ export default function TabTwoScreen() {
         <ThemedText type="subtitle">Profile</ThemedText>
       </ThemedView>
       <Profile
-        name="Bob"
-        email= {email}
-        avatarUrl='https://www.pngplay.com/wp-content/uploads/12/User-Avatar-Profile-Transparent-Clip-Art-PNG.png' 
-        following= {0}
+        name={name}
+        username={username}
+        avatarUrl= { avatar }
+        following={0}
         followers={0} >
       </Profile>
       <Button onPress={() => supabase.auth.signOut()} title="Sign Out" />

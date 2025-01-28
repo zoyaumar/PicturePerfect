@@ -15,7 +15,6 @@ async function signUpWithEmail() {
     email: email,
     password: password,
   });
-
   if (error) Alert.alert(error.message);
   setLoading(false);
 } 

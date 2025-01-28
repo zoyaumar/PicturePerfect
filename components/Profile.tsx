@@ -6,19 +6,19 @@ import { styles } from '@/assets/tasks/styles';
 
 interface UserProfileProps {
     name: string;
-    email: string | null;
-    avatarUrl: string;
+    username: string | null;
+    avatarUrl: string | null;
     bio?: string;
     following: number;
     followers: number;
 }
-
-const UserProfile: React.FC<UserProfileProps> = ({ name, email, avatarUrl, following, followers, bio }) => {
+const UserProfile: React.FC<UserProfileProps> = ({ name, username, avatarUrl, following, followers, bio }) => {
+    const avatar = "https://ucarecdn.com/372dbec8-6008-4d2c-917a-b6c0da1b346b/-/scale_crop/300x300/"
     return (
         <View style={style.container}>
-            <Image source={{ uri: avatarUrl }} style={style.avatar} />
+            <Image source={{ uri: avatarUrl ? avatarUrl:avatar }} style={style.avatar} />
             <Text style={style.name}>{name}</Text>
-            <Text >{email}</Text>
+            <Text >{username}</Text>
             <ThemedView style={style.titleContainer}>
                 <ThemedText type='defaultSemiBold'>Following: {following}</ThemedText>
                 <ThemedText type='defaultSemiBold'>Followers: {followers}</ThemedText>

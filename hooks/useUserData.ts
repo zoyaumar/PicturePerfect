@@ -1,5 +1,7 @@
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/providers/AuthProvider";
 import { Uuid } from "@uploadcare/upload-client";
+import { Alert } from "react-native";
 
 const getUserEmail = async () => {
     const { data: { user }, error } = await supabase.auth.getUser();
@@ -36,7 +38,7 @@ export const updateImages = async (userId: any, images: any) => {
     }
 }
 
-export const getUserImages = async (userId: string):Promise<string[]> => {
+export const getUserImages = async (userId: string): Promise<string[] | null> => {
     try {
         const { data, error } = await supabase
             .from('profiles')
@@ -56,23 +58,23 @@ export const getUserImages = async (userId: string):Promise<string[]> => {
 }
 
 export const insertPost = async (userId: string, image: string) => {
-    const {data, error} = await supabase
+    const { data, error } = await supabase
         .from('posts')
-        .insert([{ image: image, user_id: userId}])
+        .insert([{ image: image, user_id: userId }])
         .select()
 }
 
 export const getPosts = async () => {
-    const {data, error} = await supabase
+    const { data, error } = await supabase
         .from('posts')
         .select('*, user:profiles(*)')
-        .order('created_at', {ascending: false})
-        //.eq('id')
+        .order('created_at', { ascending: false })
+    //.eq('id')
 
     return data
 }
 
-export const getUserTasks = async (userId: string):Promise<string[]> => {
+export const getUserTasks = async (userId: string): Promise<string[]> => {
     try {
         const { data, error } = await supabase
             .from('profiles')
@@ -107,12 +109,90 @@ export const updateTasks = async (userId: any, tasks: any) => {
     }
 }
 
-const getAvatar = async () => {
-    const { data: { user }, error } = await supabase.auth.getUser();
-    if (user) {
-        return user.id;
+export const getAvatar = async (userId: any) => {
+    const { data, error } = await supabase
+        .from('profiles')
+        .select('avatar_url')
+        .eq('id', userId)
+        .single();
+
+    if (error) {
+        throw new Error(error.message);
     }
-    return null
+    return data ? data.avatar_url : null;
+
 }
+
+export const getProfile = async (userId: any) => {
+    const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+    if (error) {
+        Alert.alert('Failed to fetch profile');
+    }
+
+    return data
+}
+
+export const getUsername = async (userId: any) => {
+    const { data, error } = await supabase
+        .from('profiles')
+        .select('username')
+        .eq('id', userId)
+        .single();
+
+    if (error) {
+        throw new Error(error.message);
+    }
+    return data ? data.username : null;
+
+}
+
+
+export const generateUsername = async () => {
+    const { session } = useAuth();
+    const username = await getUsername(session?.user.id + '')
+    if (!username) {
+        const email = session?.user.email + ''
+        const usernamePart = email.split('@')[0];
+        const randomSuffix = Array.from({ length: 4 }, () => {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            return characters.charAt(Math.floor(Math.random() * characters.length));
+        }).join('');
+
+        const randomUsername = `${usernamePart}_${randomSuffix}`;
+
+        // update username
+        if (session) {
+            const { data, error } = await supabase
+                .from('profiles')
+                .update({ username: randomUsername })
+                .eq('id', session.user.id)
+                .select()
+
+            if (error) {
+                throw new Error(error.message);
+            }
+        }
+        if (session) {
+            const { data, error } = await supabase
+                .from('profiles')
+                .update({ full_name: usernamePart })
+                .eq('id', session.user.id)
+                .select()
+
+            if (error) {
+                throw new Error(error.message);
+            }
+        }
+
+    }
+}
+
+
+
 
 export default getUserEmail
