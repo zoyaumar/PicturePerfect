@@ -2,7 +2,8 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, Button } from 'react-native';
 import { ThemedText } from './ThemedText';
 import { ThemedView } from './ThemedView';
-import { styles } from '@/assets/tasks/styles';
+import { Link } from 'expo-router';
+import { Colors } from '@/constants/Colors';
 
 interface UserProfileProps {
     name: string;
@@ -16,7 +17,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ name, username, avatarUrl, fo
     const avatar = "https://ucarecdn.com/372dbec8-6008-4d2c-917a-b6c0da1b346b/-/scale_crop/300x300/"
     return (
         <View style={style.container}>
-            <Image source={{ uri: avatarUrl ? avatarUrl:avatar }} style={style.avatar} />
+            <Image source={{ uri: avatarUrl ? avatarUrl : avatar }} style={style.avatar} />
             <Text style={style.name}>{name}</Text>
             <Text >{username}</Text>
             <ThemedView style={style.titleContainer}>
@@ -25,8 +26,12 @@ const UserProfile: React.FC<UserProfileProps> = ({ name, username, avatarUrl, fo
             </ThemedView>
             {bio && <Text style={style.bio}>{bio}</Text>}
             <ThemedView style={style.titleContainer}>
-                <Button title={'Add Friends'}></Button>
-                <Button title={'Edit Profile'}></Button>
+                <Link href="/" style={style.textButton}>
+                    Add Friends
+                </Link>
+                <Link href="/(nobottombar)/edit-profile" style={style.textButton}>
+                    Sign in
+                </Link>
             </ThemedView>
 
         </View>
@@ -49,6 +54,18 @@ const style = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 10,
         elevation: 5,
+    },
+    textButton: {
+        //alignItems: 'center',
+        //justifyContent: 'center',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        backgroundColor: Colors.dark.background,
+        alignSelf: 'center',
+        fontWeight: 'bold',
+        color: Colors.dark.text,
+        marginVertical: 10, // Button color
+        borderRadius: 5, // Border color
     },
     avatar: {
         width: 100,

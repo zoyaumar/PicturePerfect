@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/providers/AuthProvider';
 import { Redirect } from 'expo-router';
 import Profile from '@/components/Profile';
-import getUserEmail, { getAvatar, getProfile } from '@/hooks/useUserData';
+import { getProfile } from '@/hooks/useUserData';
 import { useEffect, useState } from 'react';
 
 export default function TabTwoScreen() {
