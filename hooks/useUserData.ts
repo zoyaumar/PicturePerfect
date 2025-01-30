@@ -57,10 +57,10 @@ export const getUserImages = async (userId: string): Promise<string[] | null> =>
     }
 }
 
-export const insertPost = async (userId: string, image: string) => {
+export const insertPost = async (userId: string, image: string, completed: boolean) => {
     const { data, error } = await supabase
         .from('posts')
-        .insert([{ image: image, user_id: userId }])
+        .insert([{ image: image, user_id: userId, completed: completed }])
         .select()
 }
 
@@ -165,7 +165,7 @@ export const generateUsername = async () => {
 
         const randomUsername = `${usernamePart}_${randomSuffix}`;
 
-        // update username
+        // update username and name
         if (session) {
             const { data, error } = await supabase
                 .from('profiles')
@@ -192,7 +192,25 @@ export const generateUsername = async () => {
     }
 }
 
+export const updateProfile = async (userId: any, profileData: any) => {
+    try {
+        const { data, error } = await supabase
+            .from('profiles')
+            .update({ 
+                username: profileData.username, 
+                full_name: profileData.name,
+                avatar_url: profileData.avatar,
+            })
+            .eq('id', userId)
+            .select()
 
+        if (error) {
+            throw new Error(error.message);
+        }
+    } catch (error) {
+        console.error('Error updating user tasks:', error);
+    }
+}
 
 
 export default getUserEmail

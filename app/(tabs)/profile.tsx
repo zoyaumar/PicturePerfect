@@ -7,6 +7,8 @@ import { Redirect } from 'expo-router';
 import Profile from '@/components/Profile';
 import { getProfile } from '@/hooks/useUserData';
 import { useEffect, useState } from 'react';
+import PostNav from '@/components/TopBarNav';
+import { PostsGrid } from '@/components/Posts';
 
 export default function TabTwoScreen() {
   const { session } = useAuth();
@@ -45,6 +47,7 @@ export default function TabTwoScreen() {
         following={0}
         followers={0} >
       </Profile>
+      <PostNav></PostNav>
       <Button onPress={() => supabase.auth.signOut()} title="Sign Out" />
     </ScrollView >
   );

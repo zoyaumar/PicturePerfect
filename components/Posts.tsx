@@ -1,9 +1,7 @@
-import { Image, StyleSheet, Platform, View, StatusBar } from 'react-native';
+import { Image, StyleSheet, Platform, View, StatusBar, FlatList, Text } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import React, { useEffect, useState } from 'react';
-import posts from '../assets/posts.json'
-
 import { Ionicons, Feather, AntDesign } from '@expo/vector-icons'
 
 export default function PostList({ post }: { post: any }) {
@@ -49,6 +47,32 @@ export default function PostList({ post }: { post: any }) {
     )
 }
 
+
+
+
+export const PostsGrid = ({posts}:any) => {
+    console.log('posts', posts)
+    const renderItem = ({ item }: { item: { id: string; image: string } }) => (
+        //<Text>{item.image} {item.id}</Text>
+        <View style={styles.gridItem}>
+            <Image source={{ uri: item.image }} style={styles.image} />
+        </View>
+    );
+
+    return (
+        <View style={styles.container}>
+            <FlatList
+                data={posts}
+                renderItem={renderItem}
+                keyExtractor={item => item.id}
+                numColumns={3} // Set the number of columns for the grid
+                columnWrapperStyle={styles.row} // Style for each row
+            />
+        </View>
+    );
+};
+
+
 const styles = StyleSheet.create({
     img: {
         width: '100%',
@@ -79,5 +103,27 @@ const styles = StyleSheet.create({
     gap: {
         marginBottom: 5,
         marginTop: 10
-    }
+    },
+    container: {
+        flex: 1,
+        padding: 10,
+        backgroundColor: '#0009',
+    },
+    profileName: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+    gridItem: {
+        flex: 1,
+        margin: 5,
+        aspectRatio: 1, 
+    },
+    image: {
+        width: '100%',
+        height: '100%',
+    },
+    row: {
+        justifyContent: 'space-between',
+    },
 });

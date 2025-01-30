@@ -30,7 +30,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ name, username, avatarUrl, fo
                     Add Friends
                 </Link>
                 <Link href="/(nobottombar)/edit-profile" style={style.textButton}>
-                    Sign in
+                    Edit Profile
                 </Link>
             </ThemedView>
 

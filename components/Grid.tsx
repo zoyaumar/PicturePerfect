@@ -98,10 +98,15 @@ const Grid = ({ rows, cols }: { rows: number, cols: number }) => {
           type: 'image/jpeg',
         };
 
+        const imageCount = images.filter(item => item !== null).length;
+
         uploadFile(assets, { publicKey: 'ad7300aff23461f09657' }).then((file) => {
           const imgUrl = file.cdnUrl + file.name
-          insertPost(session?.user.id + '', imgUrl)
+          insertPost(session?.user.id + '', imgUrl, (images.length==imageCount))
         })
+
+        setImages(Array(rows * cols).fill(null))
+        updateImages(session?.user.id, Array(rows * cols).fill(null))
 
 
       } catch (error) {
