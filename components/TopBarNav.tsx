@@ -4,11 +4,14 @@ import { View, Text, Button, StyleSheet } from 'react-native';
 import { PostsGrid } from './Posts';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/providers/AuthProvider';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 const PostNav = () => {
     const [currentSection, setCurrentSection] = useState<'A' | 'B' | 'C'>('A');
     const { session } = useAuth();
     const [allPosts, setAllPosts] = useState<any[] | null>()
+    const [publicPosts, setPublicPosts] = useState<any[] | null>()
+    const [completedPosts, setCompletedPosts] = useState<any[] | null>()
 
     useEffect(() => {
         const getAllPosts = async () => {
@@ -17,10 +20,32 @@ const PostNav = () => {
                 .select('*')
                 .eq('user_id', session?.user.id)
                 .order('created_at', { ascending: false })
-            console.log('data', data)
+            //console.log('data', data)
             setAllPosts(data)
         }
+        const getPublicPosts = async () => {
+            const { data, error } = await supabase
+                .from('posts')
+                .select('*')
+                .eq('user_id', session?.user.id)
+                .eq('public', true)
+                .order('created_at', { ascending: false })
+            //console.log('data', data)
+            setPublicPosts(data)
+        }
+        const getCompletedPosts = async () => {
+            const { data, error } = await supabase
+                .from('posts')
+                .select('*')
+                .eq('user_id', session?.user.id)
+                .eq('completed', true)
+                .order('created_at', { ascending: false })
+            //console.log('data', data)
+            setCompletedPosts(data)
+        }
         getAllPosts()
+        getPublicPosts()
+        getCompletedPosts()
     }, [])
     
 
@@ -51,24 +76,24 @@ const PostNav = () => {
             </View>
 
             {currentSection === 'A' && (
-                <View style={styles.section}>
-                    <Text style={styles.title}>This is Section A</Text>
-                    <PostsGrid posts={allPosts}></PostsGrid>
-                </View>
+                <>
+                {/* <PostsGrid postData={allPosts}></PostsGrid> */}
+                    {allPosts ? (<PostsGrid postData={publicPosts}></PostsGrid>):(<Text style={styles.title}>No Posts Yet</Text>)}
+                </>
             )}
 
             {currentSection === 'B' && (
-                <View style={styles.section}>
-                    <Text style={styles.title}>This is Section B</Text>
-                    <PostsGrid posts={allPosts}></PostsGrid>
-                </View>
+                <>
+                {/* <PostsGrid postData={allPosts}></PostsGrid> */}
+                    {allPosts ? (<PostsGrid postData={completedPosts}></PostsGrid>):(<Text style={styles.title}>No Posts Yet</Text>)}
+                </>
             )}
 
             {currentSection === 'C' && (
-                <View style={styles.section}>
-                    <Text style={styles.title}>This is Section C</Text>
-                    <PostsGrid posts={allPosts}></PostsGrid>
-                </View>
+                <>
+                {/* <PostsGrid postData={allPosts}></PostsGrid> */}
+                    {allPosts ? (<PostsGrid postData={allPosts}></PostsGrid>):(<Text style={styles.title}>No Posts Yet</Text>)}
+                </>
             )}
         </View>
     );
@@ -79,10 +104,13 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: Colors.dark.tint,
+        color:Colors.dark.tint,
+        width:'100%'
     },
     nav: {
         flexDirection: 'row',
-        marginBottom: 20,
+        marginBottom: 5,
         //width:"33%"
     },
     button: {

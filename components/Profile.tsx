@@ -42,7 +42,7 @@ const style = StyleSheet.create({
     titleContainer: {
         flexDirection: 'row',
         gap: 8,
-        padding: 10,
+        padding: 5,
         justifyContent: 'center'
     },
     container: {

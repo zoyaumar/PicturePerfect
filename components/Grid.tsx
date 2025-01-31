@@ -170,8 +170,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#eee',
     width: '100%',
     height: '100%',
-
-
   },
   text: {
     textAlign: 'center',

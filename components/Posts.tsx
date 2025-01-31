@@ -1,8 +1,9 @@
-import { Image, StyleSheet, Platform, View, StatusBar, FlatList, Text } from 'react-native';
+import { Image, StyleSheet, Platform, View, StatusBar, FlatList, Text, TouchableOpacity, Dimensions } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import React, { useEffect, useState } from 'react';
 import { Ionicons, Feather, AntDesign } from '@expo/vector-icons'
+import { Colors } from '@/constants/Colors';
 
 export default function PostList({ post }: { post: any }) {
     const [username, setUser] = useState('user');
@@ -50,24 +51,29 @@ export default function PostList({ post }: { post: any }) {
 
 
 
-export const PostsGrid = ({posts}:any) => {
-    console.log('posts', posts)
-    const renderItem = ({ item }: { item: { id: string; image: string } }) => (
-        //<Text>{item.image} {item.id}</Text>
-        <View style={styles.gridItem}>
-            <Image source={{ uri: item.image }} style={styles.image} />
-        </View>
-    );
-
+export const PostsGrid = ({ postData }: any) => {
+    const [posts, setPosts] = useState(postData)
+    const columnWidth = (Dimensions.get('window').width) / 3
+    useEffect(() => {
+        setPosts(postData)
+        console.log('posts', postData)
+    }, [])
+    
     return (
-        <View style={styles.container}>
-            <FlatList
-                data={posts}
-                renderItem={renderItem}
-                keyExtractor={item => item.id}
-                numColumns={3} // Set the number of columns for the grid
-                columnWrapperStyle={styles.row} // Style for each row
-            />
+        <View style={styles.grid}>
+            {posts && posts.map((post: any, index: number) => (
+                <TouchableOpacity
+                    key={index}
+                    style={[styles.gridItem, { width: columnWidth }, { height: columnWidth }]}
+                    onPress={() => ''}
+                >
+                    {post ? (<Image source={{ uri: post.image }} style={styles.image} />
+                        ) : (
+                        <View style={styles.placeholder}>
+                        </View>
+                    )}
+                </TouchableOpacity>
+            ))}
         </View>
     );
 };
@@ -104,26 +110,29 @@ const styles = StyleSheet.create({
         marginBottom: 5,
         marginTop: 10
     },
-    container: {
-        flex: 1,
-        padding: 10,
-        backgroundColor: '#0009',
-    },
-    profileName: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 10,
+
+    grid: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        width: '100%',
+        //aspectRatio: 1,
+        margin:8,
+        padding:5,
+        justifyContent: 'flex-start'
     },
     gridItem: {
-        flex: 1,
-        margin: 5,
-        aspectRatio: 1, 
+        borderWidth: 2,
+        borderColor: '#ccc',
+        justifyContent: 'center',
+        // alignItems: 'center',
     },
     image: {
         width: '100%',
         height: '100%',
     },
-    row: {
-        justifyContent: 'space-between',
-    },
+    placeholder: {
+        backgroundColor: '#eee',
+        width: '100%',
+        height: '100%',
+      },
 });
