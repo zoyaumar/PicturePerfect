@@ -69,7 +69,7 @@ export const getPosts = async () => {
         .from('posts')
         .select('*, user:profiles(*)')
         .order('created_at', { ascending: false })
-    //.eq('id')
+        .eq('public', true)
 
     return data
 }

@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     width: '100%',
     aspectRatio: 1,
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   gridItem: {
     borderWidth: 1,

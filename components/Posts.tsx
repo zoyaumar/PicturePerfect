@@ -4,26 +4,37 @@ import { ThemedText } from '@/components/ThemedText';
 import React, { useEffect, useState } from 'react';
 import { Ionicons, Feather, AntDesign } from '@expo/vector-icons'
 import { Colors } from '@/constants/Colors';
+import { Link, router, useGlobalSearchParams } from 'expo-router';
 
 export default function PostList({ post }: { post: any }) {
     const [username, setUser] = useState('user');
     const [avatar, setAvatar] = useState('https://ucarecdn.com/372dbec8-6008-4d2c-917a-b6c0da1b346b/-/scale_crop/300x300/');
+    const [userId, setId] = useState(post.user_id)
 
     useEffect(() => {
         const getData = async () => {
             let username = await post.user.username
             setUser(username)
             let avatar = await post.user.avatar_url
-            console.log(avatar)
             setAvatar(avatar)
         }
         getData()
     }, [])
 
+    const updateParams= () =>{
+        router.setParams({userId:useGlobalSearchParams<{ userId: string }>().userId})
+    }
+
     return (
         <ThemedView lightColor='white' style={styles.gap}>
             <View style={styles.username}>
-                <Image source={{ uri: avatar }} style={styles.avatar} />
+                <Link href={{
+                    pathname: '/(tabs)/profile/[userId]',
+                    params: {userId}
+                }}
+                onPress={()=>updateParams}>
+                    <Image source={{ uri: avatar }} style={styles.avatar} />
+                </Link>
                 {username ? (
                     <ThemedText type='defaultSemiBold'> {username} </ThemedText>
                 ) : (
@@ -49,8 +60,6 @@ export default function PostList({ post }: { post: any }) {
 }
 
 
-
-
 export const PostsGrid = ({ postData }: any) => {
     const [posts, setPosts] = useState(postData)
     const columnWidth = (Dimensions.get('window').width) / 3
@@ -58,17 +67,17 @@ export const PostsGrid = ({ postData }: any) => {
         setPosts(postData)
         console.log('posts', postData)
     }, [])
-    
+
     return (
         <View style={styles.grid}>
             {posts && posts.map((post: any, index: number) => (
                 <TouchableOpacity
                     key={index}
-                    style={[styles.gridItem, { width: columnWidth }, { height: columnWidth }]}
+                    style={[styles.gridItem, { width: '33%' }, { height: columnWidth }]}
                     onPress={() => ''}
                 >
                     {post ? (<Image source={{ uri: post.image }} style={styles.image} />
-                        ) : (
+                    ) : (
                         <View style={styles.placeholder}>
                         </View>
                     )}
@@ -116,12 +125,13 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         width: '100%',
         //aspectRatio: 1,
-        margin:8,
-        padding:5,
-        justifyContent: 'flex-start'
+        margin: 8,
+        padding: 3,
+        justifyContent: 'flex-start',
+        gap: 3
     },
     gridItem: {
-        borderWidth: 2,
+        borderWidth: 1,
         borderColor: '#ccc',
         justifyContent: 'center',
         // alignItems: 'center',
@@ -134,5 +144,5 @@ const styles = StyleSheet.create({
         backgroundColor: '#eee',
         width: '100%',
         height: '100%',
-      },
+    },
 });
