@@ -26,7 +26,7 @@ export default function ProfileScreen() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const fetchedData = await getProfile(userId);
+      const fetchedData = await getProfile(session?.user.id);
       setEmail(session?.user.email+'')
       setAvatar(fetchedData.avatar_url)
       setUsername(fetchedData.username)

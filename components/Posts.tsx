@@ -102,7 +102,8 @@ const styles = StyleSheet.create({
         height: 40,
         margin: 5,
         marginLeft: 10,
-        borderRadius: 100
+        borderRadius: 100,
+        padding: 2
     },
     username: {
         flexDirection: 'row',
