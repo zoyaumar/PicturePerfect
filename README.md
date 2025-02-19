@@ -3,12 +3,9 @@ Beta version will be released in the future.
 
 **Overview**:
 
-If you're struggling to complete your daily tasks or chores, this mobile app is for you - 
-
-PicturePerfect is an accountability app in which users fill in a daily collage of photos to create their Picture Perfect Day. Users can upload one image per each task to help establish a daily habit (maximum of 9 tasks allowed per day).
-
-Users can then share their completed daily collage with others. This engaging approach helps build habits while allowing friends to glimpse the more ordinary aspects of your day. The more collages you complete, the more badges you'll earn and the longer your streak will grow. 
-
+If you're struggling to complete your daily tasks or chores, this mobile app is for you -  
+PicturePerfect is an accountability app in which users fill in a daily collage of photos to create their Picture Perfect Day. Users can upload one image per each task to help establish a daily habit (maximum of 9 tasks allowed per day).  
+Users can then share their completed daily collage with others. This engaging approach helps build habits while allowing friends to glimpse the more ordinary aspects of your day. The more collages you complete, the more badges you'll earn and the longer your streak will grow.  
 View the accompanying gif and features section for more clarification.
 
 (For example, if you input "Make the bed" as one of your tasks, you will then need to upload an image or take a picture of you doing that task every day.)
@@ -33,12 +30,9 @@ View the accompanying gif and features section for more clarification.
    
 **Technologies**:
 
-**React Native**: Enables a seamless cross-platform experience with reusable components for a native feel on both iOS and Android.
-
-**TypeScript**: Improves code reliability through static typing, helping to catch errors early.
-
-**Expo Router**: Simplifies navigation and helps me manage screen transitions effortlessly and ensuring a smooth user experience throughout the app.
-
+**React Native**: Enables a seamless cross-platform experience with reusable components for a native feel on both iOS and Android.  
+**TypeScript**: Improves code reliability through static typing, helping to catch errors early.  
+**Expo Router**: Simplifies navigation and helps me manage screen transitions effortlessly and ensuring a smooth user experience throughout the app.  
 **Supabase**: Powers user management and data storage, providing secure authentication and robust file handling for user-generated content with real-time updates.
 
 
