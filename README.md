@@ -32,9 +32,13 @@ View the accompanying gif and features section for more clarification.
  - Badges/achievements and Streak feature for those who complete a number of collages.
    
 **Technologies**:
+
 **React Native**: Enables a seamless cross-platform experience with reusable components for a native feel on both iOS and Android.
+
 **TypeScript**: Improves code reliability through static typing, helping to catch errors early.
+
 **Expo Router**: Simplifies navigation and helps me manage screen transitions effortlessly and ensuring a smooth user experience throughout the app.
+
 **Supabase**: Powers user management and data storage, providing secure authentication and robust file handling for user-generated content with real-time updates.
 
 
