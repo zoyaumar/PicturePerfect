@@ -9,8 +9,7 @@ Users can then share their completed daily collage with others. This engaging ap
 View the accompanying gif and features section for more clarification.
 
 (For example, if you input "Make the bed" as one of your tasks, you will then need to upload an image or take a picture of you doing that task every day.)
-![Library Management Screenshot](images/library1.gif)
-
+<img src="https://github.com/zoyaumar/picture-perfect-app/blob/main/pictureapp.gif" alt="PicturePerfect GIF" width="500"/>
 
 **Features/Usage**:
 - **List Tasks**: The app features a task list which can be updated at any time. The number of tasks correlates to the number of sections in the collage grid. 
