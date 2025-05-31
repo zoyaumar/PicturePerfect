@@ -3,8 +3,8 @@ Beta version will be released in the future.
 
 **Overview**:
 
-If you're struggling to complete your daily tasks or chores, this mobile app is for you -  
-PicturePerfect is an accountability app in which users fill in a daily collage of photos to create their Picture Perfect Day. Users can upload one image per each task to help establish a daily habit (maximum of 9 tasks allowed per day).  
+- If you're struggling to complete your daily tasks or chores, this app is for you -  
+PicturePerfect is an accountability app in which users fill in a daily collage of photos to create their Picture Perfect Day. Users upload one image per task to help establish a daily habit (maximum of 9 tasks allowed per day).  
 Users can then share their completed daily collage with others. This engaging approach helps build habits while allowing friends to glimpse the more ordinary aspects of your day. The more collages you complete, the more badges you'll earn and the longer your streak will grow.  
 View the accompanying gif and features section for more clarification.
 
