@@ -2,12 +2,7 @@ import { styles } from "@/assets/tasks/styles";
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import { Task } from "./Task";
-
-interface TaskItemProps {
-    task: string;
-    onDelete: () => void;
-}
+import { TaskItemProps } from "@/types";
 
 export const TaskItem: React.FC<TaskItemProps> = ({ task, onDelete }) => (
     <View style={styles.listItem}>        

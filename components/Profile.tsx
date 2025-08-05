@@ -4,20 +4,13 @@ import { ThemedText } from './ThemedText';
 import { ThemedView } from './ThemedView';
 import { Link } from 'expo-router';
 import { Colors } from '@/constants/Colors';
+import { UserProfileProps } from '@/types';
+import { DEFAULT_AVATAR_URL } from '@/constants/AppConstants';
 
-interface UserProfileProps {
-    name: string;
-    username: string | null;
-    avatarUrl: string | null;
-    bio?: string;
-    following: number;
-    followers: number;
-}
 const UserProfile: React.FC<UserProfileProps> = ({ name, username, avatarUrl, following, followers, bio }) => {
-    const avatar = "https://ucarecdn.com/372dbec8-6008-4d2c-917a-b6c0da1b346b/-/scale_crop/300x300/"
     return (
         <View style={style.container}>
-            <Image source={{ uri: avatarUrl ? avatarUrl : avatar }} style={style.avatar} />
+            <Image source={{ uri: avatarUrl ? avatarUrl : DEFAULT_AVATAR_URL }} style={style.avatar} />
             <Text style={style.name}>{name}</Text>
             <Text >{username}</Text>
             <ThemedView style={style.titleContainer}>
