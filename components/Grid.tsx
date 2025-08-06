@@ -2,148 +2,174 @@ import React, { useEffect, useRef, useState } from 'react';
 import { View, Image, TouchableOpacity, StyleSheet, Alert, Dimensions, Button } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { UploadClient, uploadFile } from '@uploadcare/upload-client';
-import { getUserId, getUserImages, getUserTasks, insertPost, updateImages } from '@/hooks/useUserData';
+import { getUserImages, getUserTasks, insertPost, updateImages } from '@/hooks/useUserData';
 import { ThemedText } from './ThemedText';
 import ViewShot, { captureRef } from 'react-native-view-shot';
 import RNFS from 'react-native-fs';
 import { useAuth } from '@/providers/AuthProvider';
+import { GridProps, ReactNativeAsset } from '@/types';
+import { UPLOADCARE_PUBLIC_KEY, IMAGE_QUALITY, IMAGE_TYPE } from '@/constants/AppConstants';
 
-
-const Grid = ({ rows, cols }: { rows: number, cols: number }) => {
-
+/**
+ * Grid component for displaying and managing user images and tasks
+ * Allows users to upload images to grid cells and save the grid as a collage
+ */
+const Grid: React.FC<GridProps> = ({ rows, cols }) => {
   const { session } = useAuth();
-  const [images, setImages] = useState(Array(rows * cols).fill(null));
-  const [fetchedTasks, setTasks] = useState(['']);
-
-  //  const { user } = useAuth();
-  //  user.id
-
-  useEffect(() => {
-    const getData = async () => {
-      const fetchedImages = await getUserImages(session?.user.id + '');
-      const arr = Array(rows * cols).fill(null)
-      if (fetchedImages) {
-        for (let i = 0; i < fetchedImages.length && i < arr.length; i++) {
-          arr[i] = fetchedImages[i]
-        }
-      }
-
-      setImages(arr)
-      setTasks(await getUserTasks(session?.user.id + ''))
-    };
-    getData()
-
-  }, [])
-
-
-  const pickImage = async (index: number) => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      quality: 1,
-    });
-
-
-    if (!result.canceled) {
-      type ReactNativeAsset = {
-        uri: string;
-        type: string;
-        name?: string;
-      };
-      const assets: ReactNativeAsset = {
-        uri: result.assets[0].uri,
-        name: result.assets[0].fileName + '',
-        type: 'image/jpeg',
-      };
-
-
-      let newImages = [...images];
-      uploadFile(assets, { publicKey: 'ad7300aff23461f09657' }).then((file) => {
-        newImages[index] = file.cdnUrl + file.name
-        newImages = newImages.slice(0, rows * cols)
-        setImages(newImages);
-        console.log(newImages)
-        updateImages(session?.user.id, newImages)
-      })
-
-    }
-  };
-
-
-  const columnWidth = (Dimensions.get('window').width) / cols
-  const columnHeight = (Dimensions.get('window').width) / rows
-
+  const [gridImages, setGridImages] = useState<(string | null)[]>(Array(rows * cols).fill(null));
+  const [userTasks, setUserTasks] = useState<string[]>(['']);
   const viewRef = useRef<ViewShot>(null);
 
+  const totalGridCells = rows * cols;
+  const screenWidth = Dimensions.get('window').width;
+  const cellWidth = screenWidth / cols;
+  const cellHeight = screenWidth / rows;
 
-  const saveCollage = async () => {
-    if (viewRef.current) {
+  useEffect(() => {
+    const loadUserData = async () => {
+      if (!session?.user?.id) return;
+
       try {
-        const uri = await captureRef(viewRef.current, {
-          format: 'jpg',
-          quality: 0.8,
-        });
+        // Load user images
+        const fetchedImages = await getUserImages(session.user.id);
+        const imageArray = Array(totalGridCells).fill(null);
+        
+        if (fetchedImages) {
+          for (let i = 0; i < Math.min(fetchedImages.length, imageArray.length); i++) {
+            imageArray[i] = fetchedImages[i];
+          }
+        }
 
-        const path = `${RNFS.ExternalDirectoryPath}/collage.jpg`;
-        await RNFS.copyFile(uri, path);
-        console.log('Image saved to', path);
-
-        type ReactNativeAsset = {
-          uri: string;
-          type: string;
-          name?: string;
-        };
-        const assets: ReactNativeAsset = {
-          uri: uri,
-          type: 'image/jpeg',
-        };
-
-        const imageCount = images.filter(item => item !== null).length;
-
-        uploadFile(assets, { publicKey: 'ad7300aff23461f09657' }).then((file) => {
-          const imgUrl = file.cdnUrl + file.name
-          insertPost(session?.user.id + '', imgUrl, (images.length==imageCount))
-        })
-
-        setImages(Array(rows * cols).fill(null))
-        updateImages(session?.user.id, Array(rows * cols).fill(null))
-
-
+        setGridImages(imageArray);
+        
+        // Load user tasks
+        const fetchedTasks = await getUserTasks(session.user.id);
+        setUserTasks(fetchedTasks);
       } catch (error) {
-        console.error('Error capturing view:', error);
+        console.error('Error loading user data:', error);
+        Alert.alert('Error', 'Failed to load user data');
       }
-    } else {
-      console.error('View reference is undefined');
+    };
+
+    loadUserData();
+  }, [session?.user?.id, totalGridCells]);
+
+  /**
+   * Handles image selection and upload for a specific grid cell
+   */
+  const handleImageSelection = async (cellIndex: number) => {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        quality: 1,
+      });
+
+      if (result.canceled || !session?.user?.id) return;
+
+      const selectedImage = result.assets[0];
+      const asset: ReactNativeAsset = {
+        uri: selectedImage.uri,
+        name: selectedImage.fileName || 'image.jpg',
+        type: IMAGE_TYPE,
+      };
+
+      // Upload image to Uploadcare
+      const uploadedFile = await uploadFile(asset, { publicKey: UPLOADCARE_PUBLIC_KEY });
+      const imageUrl = uploadedFile.cdnUrl + uploadedFile.name;
+
+      // Update grid images
+      const updatedImages = [...gridImages];
+      updatedImages[cellIndex] = imageUrl;
+      const trimmedImages = updatedImages.slice(0, totalGridCells);
+      
+      setGridImages(trimmedImages);
+      await updateImages(session.user.id, trimmedImages);
+      
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      Alert.alert('Error', 'Failed to upload image');
     }
   };
 
+  /**
+   * Captures the grid as an image and saves it as a post
+   */
+  const saveGridAsCollage = async () => {
+    if (!viewRef.current || !session?.user?.id) return;
+
+    try {
+      // Capture the grid view
+      const capturedImageUri = await captureRef(viewRef.current, {
+        format: 'jpg',
+        quality: IMAGE_QUALITY,
+      });
+
+      // Save to device storage
+      const filePath = `${RNFS.ExternalDirectoryPath}/collage.jpg`;
+      await RNFS.copyFile(capturedImageUri, filePath);
+      console.log('Collage saved to:', filePath);
+
+      // Upload collage to Uploadcare
+      const asset: ReactNativeAsset = {
+        uri: capturedImageUri,
+        type: IMAGE_TYPE,
+      };
+
+      const uploadedFile = await uploadFile(asset, { publicKey: UPLOADCARE_PUBLIC_KEY });
+      const collageUrl = uploadedFile.cdnUrl + uploadedFile.name;
+      
+      // Check if grid is completed (all cells have images)
+      const filledCells = gridImages.filter(image => image !== null).length;
+      const isCompleted = filledCells === totalGridCells;
+
+      // Save as post
+      await insertPost(session.user.id, collageUrl, isCompleted);
+
+      // Reset grid
+      const emptyGrid = Array(totalGridCells).fill(null);
+      setGridImages(emptyGrid);
+      await updateImages(session.user.id, emptyGrid);
+
+      Alert.alert('Success', 'Grid saved as collage!');
+      
+    } catch (error) {
+      console.error('Error saving collage:', error);
+      Alert.alert('Error', 'Failed to save collage');
+    }
+  };
 
   return (
     <View>
       <ViewShot ref={viewRef} style={styles.grid}>
-        {images.map((image, index) => (
+        {gridImages.map((image, index) => (
           <TouchableOpacity
             key={index}
-            style={[styles.gridItem, { width: columnWidth }, { height: columnHeight }]}
-            onPress={() => pickImage(index)}
+            style={[
+              styles.gridCell,
+              { width: cellWidth, height: cellHeight }
+            ]}
+            onPress={() => handleImageSelection(index)}
           >
             {image ? (
-              <Image source={{ uri: image }} style={styles.image} />
+              <Image source={{ uri: image }} style={styles.cellImage} />
             ) : (
-
-              <View style={styles.placeholder}>
-                {fetchedTasks[index] ? (
-                  <ThemedText type='subtitle' style={styles.text}>{fetchedTasks[index]}</ThemedText>
+              <View style={styles.placeholderCell}>
+                {userTasks[index] ? (
+                  <ThemedText type="subtitle" style={styles.taskText}>
+                    {userTasks[index]}
+                  </ThemedText>
                 ) : (
-                  <ThemedText type='subtitle' >No task found at this index.</ThemedText>
+                  <ThemedText type="subtitle">
+                    No task found at this index.
+                  </ThemedText>
                 )}
               </View>
-
             )}
           </TouchableOpacity>
         ))}
       </ViewShot>
-      <Button title="Save Grid as Image" onPress={saveCollage} />
+      <Button title="Save Grid as Image" onPress={saveGridAsCollage} />
     </View>
   );
 };
@@ -156,29 +182,30 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     justifyContent: 'center',
   },
-  gridItem: {
+  gridCell: {
     borderWidth: 1,
     borderColor: '#ccc',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  image: {
+  cellImage: {
     width: '100%',
     height: '100%',
   },
-  placeholder: {
+  placeholderCell: {
     backgroundColor: '#eee',
     width: '100%',
     height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 4,
   },
-  text: {
+  taskText: {
     textAlign: 'center',
     textAlignVertical: 'center',
     flex: 1,
-    justifyContent: 'center'
-  }
+  },
 });
-
 
 export default Grid;
 

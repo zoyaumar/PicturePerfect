@@ -2,10 +2,10 @@ import { supabase } from "@/lib/supabase";
 import { Session } from "@supabase/supabase-js";
 import { createContext, PropsWithChildren, useContext, useEffect, useState } from "react";
 
-type AuthData = {
-    session: Session | null
-    loading: boolean
-};
+interface AuthData {
+    session: Session | null;
+    loading: boolean;
+}
 
 const AuthContext = createContext<AuthData>({
     session: null,
