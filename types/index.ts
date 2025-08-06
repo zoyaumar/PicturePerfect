@@ -1,16 +1,16 @@
 // User and Profile Types
 export interface User {
-  username?: string;
-  avatar_url?: string;
+  username?: string | null;
+  avatar_url?: string | null;
 }
 
 export interface UserProfile {
   id: string;
-  username?: string;
-  full_name?: string;
-  avatar_url?: string;
-  daily_images?: string[];
-  tasks?: string[];
+  username?: string | null;
+  full_name?: string | null;
+  avatar_url?: string | null;
+  daily_images?: (string | null)[] | null;
+  tasks?: string[] | null;
 }
 
 export interface UpdateProfileData {
@@ -27,7 +27,7 @@ export interface Post {
   completed: boolean;
   public: boolean;
   created_at: string;
-  user?: User;
+  user?: User | null;
 }
 
 export interface PostData {
