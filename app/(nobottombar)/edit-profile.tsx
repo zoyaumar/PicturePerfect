@@ -15,11 +15,13 @@ const ProfileScreen: React.FC = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const fetchedData = await getProfile(session?.user.id);
-            setEmail(session?.user.email + '')
-            setAvatar(fetchedData.avatar_url ? fetchedData.avatar_url:avatar)
-            setUsername(fetchedData.username)
-            setName(fetchedData.full_name)
+            if(session?.user?.id){
+                const fetchedData = await getProfile(session?.user.id);
+                setEmail(session?.user.email + '')
+                setAvatar(fetchedData?.avatar_url ? fetchedData.avatar_url:avatar)
+                setUsername(fetchedData?.username || 'user')
+                setName(fetchedData?.full_name || 'user')
+            }
         }
         fetchData()
     }, [])
@@ -38,7 +40,7 @@ const ProfileScreen: React.FC = () => {
             email,
             avatar,
         };
-        updateProfile(session?.user.id, profileData)
+        updateProfile(session?.user.id || '', profileData)
         console.log('Profile saved:', profileData);
         Alert.alert('Success', 'Profile saved successfully!');
     };

@@ -26,11 +26,14 @@ export default function ProfileScreen() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const fetchedData = await getProfile(session?.user.id);
+      const fetchedData = await getProfile(session?.user.id || '');
       setEmail(session?.user.email+'')
-      setAvatar(fetchedData.avatar_url)
-      setUsername(fetchedData.username)
-      setName(fetchedData.full_name)
+      if(fetchedData){
+        setAvatar(fetchedData.avatar_url || '')
+        setUsername(fetchedData.username || 'user')
+        setName(fetchedData.full_name || 'user')
+      }
+      
       setId(useGlobalSearchParams<{ userId: string }>().userId)
       router.setParams({userId:useGlobalSearchParams<{ userId: string }>().userId})
     }
