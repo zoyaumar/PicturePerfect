@@ -22,7 +22,7 @@ export const getUserId = async () => {
     return data.user ? data.user.id : null; // Return user ID or null if not authenticated
 };
 
-export const updateImages = async (userId: any, images: any) => {
+export const updateImages = async (userId: string, images: string[]) => {
     try {
         const { data, error } = await supabase
             .from('profiles')
@@ -93,7 +93,7 @@ export const getUserTasks = async (userId: string): Promise<string[]> => {
     }
 }
 
-export const updateTasks = async (userId: any, tasks: any) => {
+export const updateTasks = async (userId: string, tasks: string[]) => {
     try {
         const { data, error } = await supabase
             .from('profiles')
@@ -109,7 +109,7 @@ export const updateTasks = async (userId: any, tasks: any) => {
     }
 }
 
-export const getAvatar = async (userId: any) => {
+export const getAvatar = async (userId: string) => {
     const { data, error } = await supabase
         .from('profiles')
         .select('avatar_url')
@@ -123,7 +123,7 @@ export const getAvatar = async (userId: any) => {
 
 }
 
-export const getProfile = async (userId: any) => {
+export const getProfile = async (userId: string) => {
     const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -138,7 +138,7 @@ export const getProfile = async (userId: any) => {
     return data
 }
 
-export const getUsername = async (userId: any) => {
+export const getUsername = async (userId: string) => {
     const { data, error } = await supabase
         .from('profiles')
         .select('username')
@@ -193,7 +193,7 @@ export const generateUsername = async () => {
     }
 }
 
-export const updateProfile = async (userId: any, profileData: any) => {
+export const updateProfile = async (userId: string, profileData: { username?: string; name?: string; avatar?: string }) => {
     try {
         const { data, error } = await supabase
             .from('profiles')
