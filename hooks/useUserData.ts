@@ -67,9 +67,19 @@ export const insertPost = async (userId: string, image: string, completed: boole
 export const getPosts = async () => {
     const { data, error } = await supabase
         .from('posts')
-        .select('*, user:profiles(*)')
+        .select(`
+            *,
+            user:profiles(*),
+            likes:likes(count),
+            comments:comments(count)
+        `)
         .order('created_at', { ascending: false })
         .eq('public', true)
+
+    if (error) {
+        console.error('Error fetching posts:', error);
+        return null;
+    }
 
     return data
 }
