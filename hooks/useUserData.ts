@@ -132,6 +132,7 @@ export const getProfile = async (userId: any) => {
 
     if (error) {
         Alert.alert('Failed to fetch profile');
+        return null;
     }
 
     return data

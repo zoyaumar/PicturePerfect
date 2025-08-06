@@ -14,7 +14,7 @@ import { useGlobalSearchParams, useLocalSearchParams, useSearchParams } from 'ex
 export default function ProfileScreen() {
   const { session } = useAuth();
   //const searchParams = useSearchParams();
-  const [userId, setId] = useState(useGlobalSearchParams<{ userId: string }>().userId)
+  const [userId, setId] = useState(useGlobalSearchParams<{ userId: string }>().userId || '')
   
   console.log("user", userId)  
   //const { userId } = params; 
@@ -27,12 +27,21 @@ export default function ProfileScreen() {
   useEffect(() => {
     const fetchData = async () => {
       const fetchedData = await getProfile(session?.user.id);
-      setEmail(session?.user.email+'')
-      setAvatar(fetchedData.avatar_url)
-      setUsername(fetchedData.username)
-      setName(fetchedData.full_name)
-      setId(useGlobalSearchParams<{ userId: string }>().userId)
-      router.setParams({userId:useGlobalSearchParams<{ userId: string }>().userId})
+      setEmail(session?.user.email || '')
+      
+      // Handle potentially null fetchedData
+      if (fetchedData) {
+        setAvatar(fetchedData.avatar_url || '')
+        setUsername(fetchedData.username || 'user')
+        setName(fetchedData.full_name || 'user')
+      }
+      
+      // Handle potentially undefined userId
+      const currentUserId = useGlobalSearchParams<{ userId: string }>().userId
+      if (currentUserId) {
+        setId(currentUserId)
+        router.setParams({userId: currentUserId})
+      }
     }
     fetchData()
   },[]) 
