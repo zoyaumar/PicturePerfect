@@ -98,6 +98,16 @@ export default function PostList({ post }: { post: any }) {
             <ThemedView style={styles.imageContainer}>
                 <Image source={{ uri: post.image }} style={styles.img} />
             </ThemedView>
+            {/* Post Date */}
+            <View style={styles.dateContainer}>
+                <ThemedText style={styles.dateText}>
+                    {new Date(post.created_at).toLocaleDateString('en-US', {
+                        day: 'numeric',
+                        month: 'numeric',
+                        year: 'numeric'
+                    })}
+                </ThemedText>
+            </View>
 
             <View style={styles.icons}>
                 <TouchableOpacity 
@@ -157,15 +167,32 @@ export const PostsGrid = ({ postData }: any) => {
         console.log('posts', postData)
     }, [])
 
+     const handlePostPress = (postId: string) => {
+        router.push({
+            pathname: '/(nobottombar)/post/[postId]',
+            params: { postId }
+        });
+    };
     return (
         <View style={styles.grid}>
             {posts && posts.map((post: any, index: number) => (
                 <TouchableOpacity
                     key={index}
                     style={[styles.gridItem, { width: '33%' }, { height: columnWidth }]}
-                    onPress={() => ''}
+                   onPress={() => post ? handlePostPress(post.id) : undefined}
                 >
-                    {post ? (<Image source={{ uri: post.image }} style={styles.image} />
+                     {post ? (
+                        <View style={styles.gridImageContainer}>
+                            <Image source={{ uri: post.image }} style={styles.image} />
+                            {/* Privacy indicator */}
+                            <View style={styles.privacyIndicator}>
+                                <Ionicons 
+                                    name={post.public ? 'globe' : 'lock-closed'} 
+                                    size={16} 
+                                    color={post.public ? 'green' : 'orange'} 
+                                />
+                            </View>
+                        </View>
                     ) : (
                         <View style={styles.placeholder}>
                         </View>
@@ -262,5 +289,27 @@ const styles = StyleSheet.create({
         backgroundColor: '#eee',
         width: '100%',
         height: '100%',
+    },
+     dateContainer: {
+        paddingHorizontal: 12,
+        paddingVertical: 4,
+    },
+    dateText: {
+        fontSize: 12,
+        color: '#666',
+        fontStyle: 'italic',
+    },
+     gridImageContainer: {
+        position: 'relative',
+        width: '100%',
+        height: '100%',
+    },
+     privacyIndicator: {
+        position: 'absolute',
+        top: 4,
+        right: 4,
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        borderRadius: 12,
+        padding: 4,
     },
 });

@@ -57,6 +57,10 @@ export default function RootLayout() {
             name="(nobottombar)/edit-profile" 
             options={{ title: "Edit Profile" }} 
           />
+          <Stack.Screen 
+            name="(nobottombar)/post/[postId]" 
+            options={{ title: "Post" }} 
+          />
           
           {/* 404 Not Found screen */}
           <Stack.Screen name="+not-found" />

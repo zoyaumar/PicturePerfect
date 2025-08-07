@@ -335,3 +335,68 @@ export const updateProfile = async (userId: string, profileData: UpdateProfileDa
 };
 
 export default getUserEmail;
+
+export const updatePostPrivacy = async (postId: string, isPublic: boolean): Promise<boolean> => {
+  try {
+    const { error } = await supabase
+      .from('posts')
+      .update({ public: isPublic })
+      .eq('id', postId);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Error updating post privacy:', error);
+    return false;
+  }
+};
+
+/**
+ * Deletes a post from the database
+ * @param postId - The post's ID
+ * @returns Success status
+ */
+export const deletePostById = async (postId: string): Promise<boolean> => {
+  try {
+    const { error } = await supabase
+      .from('posts')
+      .delete()
+      .eq('id', postId);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Error deleting post:', error);
+    return false;
+  }
+};
+
+/**
+ * Retrieves a single post by ID
+ * @param postId - The post's ID
+ * @returns Post data or null if not found
+ */
+export const getPostById = async (postId: string) => {
+  try {
+    const { data, error } = await supabase
+      .from('posts')
+      .select('*')
+      .eq('id', postId)
+      .single();
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error fetching post:', error);
+    return null;
+  }
+};
