@@ -120,7 +120,12 @@ export const getPosts = async () => {
   try {
     const { data, error } = await supabase
       .from('posts')
-      .select('*, user:profiles(*)')
+      .select(`
+            *,
+            user:profiles(*),
+            likes:likes(count),
+            comments:comments(count)
+        `)
       .order('created_at', { ascending: false })
       .eq('public', true);
 
